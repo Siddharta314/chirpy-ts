@@ -3,11 +3,11 @@ type body = {
   body: string;
 };
 
-type response = { valid: boolean } | { error: string };
+type response = { cleanedBody: string } | { error: string };
 
 export function handlerValidateChirp(req: Request, res: Response) {
   let body = "";
-
+  const profaneWords = ["kerfuffle", "sharbert", "fornax"];
   req.on("data", (chunk) => {
     body += chunk;
   });
@@ -24,7 +24,17 @@ export function handlerValidateChirp(req: Request, res: Response) {
         const errorResponse: response = { error: "Chirp is too long" };
         return res.status(400).send(JSON.stringify(errorResponse));
       }
-      const successResponse: response = { valid: true };
+
+      const cleanedBody = parsedBody.body
+        .split(" ")
+        .map((word) => {
+          if (profaneWords.includes(word.toLowerCase())) {
+            return "****";
+          }
+          return word;
+        })
+        .join(" ");
+      const successResponse: response = { cleanedBody };
       res.status(200).send(JSON.stringify(successResponse));
       return;
     } catch (error) {
