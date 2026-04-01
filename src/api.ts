@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { BadRequestError } from "./customError.js";
 type body = {
   body: string;
 };
@@ -21,11 +22,10 @@ export function handlerValidateChirp(
     try {
       const parsedBody = JSON.parse(body) as body;
       if (typeof parsedBody.body !== "string") {
-        const errorResponse: response = { error: "Something went wrong" };
-        return res.status(400).send(JSON.stringify(errorResponse));
+        throw new BadRequestError("String expected");
       }
       if (parsedBody.body.length > 140) {
-        throw new Error("Chirp is too long");
+        throw new BadRequestError("Chirp is too long. Max length is 140");
       }
 
       const cleanedBody = parsedBody.body
