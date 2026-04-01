@@ -1,11 +1,15 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 type body = {
   body: string;
 };
 
 type response = { cleanedBody: string } | { error: string };
 
-export function handlerValidateChirp(req: Request, res: Response) {
+export function handlerValidateChirp(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   let body = "";
   const profaneWords = ["kerfuffle", "sharbert", "fornax"];
   req.on("data", (chunk) => {
@@ -21,8 +25,7 @@ export function handlerValidateChirp(req: Request, res: Response) {
         return res.status(400).send(JSON.stringify(errorResponse));
       }
       if (parsedBody.body.length > 140) {
-        const errorResponse: response = { error: "Chirp is too long" };
-        return res.status(400).send(JSON.stringify(errorResponse));
+        throw new Error("Chirp is too long");
       }
 
       const cleanedBody = parsedBody.body
@@ -38,8 +41,7 @@ export function handlerValidateChirp(req: Request, res: Response) {
       res.status(200).send(JSON.stringify(successResponse));
       return;
     } catch (error) {
-      const errorResponse: response = { error: "Something went wrong" };
-      res.status(400).send(JSON.stringify(errorResponse));
+      next(error);
     }
   });
 }

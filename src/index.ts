@@ -1,5 +1,4 @@
-import express from "express";
-import { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import {
   middlewareLogResponses,
   middlewareIncrementFileserverHits,
@@ -25,6 +24,8 @@ app.post("/admin/reset", handlerReset);
 
 app.post("/api/validate_chirp", handlerValidateChirp);
 
+app.use(errorHandler);
+
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
@@ -48,4 +49,16 @@ function handlerReset(req: Request, res: Response) {
   config.fileserverHits = 0;
   res.set("Content-Type", "text/plain; charset=utf-8");
   res.send("OK");
+}
+
+function errorHandler(
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  console.error(err);
+  res.status(500).json({
+    error: "Something went wrong on our end",
+  });
 }
