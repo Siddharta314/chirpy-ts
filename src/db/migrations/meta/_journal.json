@@ -8,6 +8,13 @@
       "when": 1775034316109,
       "tag": "0000_daily_hex",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775128072271,
+      "tag": "0001_sparkling_daredevil",
+      "breakpoints": true
     }
   ]
 }

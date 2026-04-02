@@ -10,9 +10,9 @@ type body = {
 
 type response = { cleanedBody: string } | { error: string };
 
-chirpyRouter.post("/validate_chirp", handlerValidateChirp);
+chirpyRouter.post("/", handlerCreateChirp);
 
-function handlerValidateChirp(req: Request, res: Response, next: NextFunction) {
+function handlerCreateChirp(req: Request, res: Response, next: NextFunction) {
   let body = "";
   const profaneWords = ["kerfuffle", "sharbert", "fornax"];
   req.on("data", (chunk) => {

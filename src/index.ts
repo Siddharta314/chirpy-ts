@@ -21,7 +21,7 @@ app.use(
 
 app.use("/admin", adminRouter);
 app.use("/api", healthRouter);
-app.use("/api", chirpyRouter);
+app.use("/api/chirps", chirpyRouter);
 app.use("/api/users", userRouter);
 
 app.use(middlewareErrorHandler);
