@@ -7,6 +7,7 @@ import {
 import { chirpyRouter } from "./api/chirpy.js";
 import { healthRouter } from "./api/health.js";
 import { adminRouter } from "./api/admin.js";
+import { userRouter } from "./api/users.js";
 
 const app = express();
 const PORT = 8080;
@@ -21,6 +22,7 @@ app.use(
 app.use("/admin", adminRouter);
 app.use("/api", healthRouter);
 app.use("/api", chirpyRouter);
+app.use("/api/users", userRouter);
 
 app.use(middlewareErrorHandler);
 
