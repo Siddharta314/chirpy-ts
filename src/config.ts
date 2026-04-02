@@ -1,4 +1,7 @@
 import type { MigrationConfig } from "drizzle-orm/migrator";
+import { loadEnvFile } from "node:process";
+
+loadEnvFile();
 
 type Config = {
   api: APIConfig;
