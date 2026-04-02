@@ -1,7 +1,8 @@
 import { config } from "../config.js";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Router } from "express";
-
+import { ForbiddenError } from "../customError.js";
+import { deleteAllUsers } from "../db/queries/users.js";
 export const adminRouter = Router();
 
 adminRouter.get("/metrics", handlerMetrics);
@@ -17,8 +18,16 @@ function handlerMetrics(req: Request, res: Response) {
 </html>`);
 }
 
-function handlerReset(req: Request, res: Response) {
-  config.api.fileserverHits = 0;
-  res.set("Content-Type", "text/plain; charset=utf-8");
-  res.send("OK");
+async function handlerReset(req: Request, res: Response, next: NextFunction) {
+  try {
+    if (config.platform !== "dev") {
+      throw new ForbiddenError("Reset is only allowed in dev mode");
+    }
+    config.api.fileserverHits = 0;
+    await deleteAllUsers();
+    res.set("Content-Type", "text/plain; charset=utf-8");
+    res.send("OK");
+  } catch (error) {
+    next(error);
+  }
 }
