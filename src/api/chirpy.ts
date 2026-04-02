@@ -1,30 +1,61 @@
 import { NextFunction, Request, Response } from "express";
 import { BadRequestError } from "../customError.js";
 import { Router } from "express";
+import { createChirp } from "../db/queries/chirps.js";
 
 export const chirpyRouter = Router();
 
 type body = {
   body: string;
+  userId: string;
 };
-
-type response = { cleanedBody: string } | { error: string };
 
 chirpyRouter.post("/", handlerCreateChirp);
 
-function handlerCreateChirp(req: Request, res: Response, next: NextFunction) {
-  let body = "";
+async function handlerCreateChirp(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   const profaneWords = ["kerfuffle", "sharbert", "fornax"];
-  req.on("data", (chunk) => {
-    body += chunk;
-  });
+  try {
+    const { body, userId } = req.body;
+    if (typeof body !== "string" || typeof userId !== "string") {
+      throw new BadRequestError("Missing values");
+    }
+    if (body.length > 140) {
+      throw new BadRequestError("Chirp is too long. Max length is 140");
+    }
 
-  req.on("end", () => {
+    const cleanedBody = body
+      .split(" ")
+      .map((word) => {
+        if (profaneWords.includes(word.toLowerCase())) {
+          return "****";
+        }
+        return word;
+      })
+      .join(" ");
+    const newChirp = await createChirp({
+      body: cleanedBody,
+      userId,
+    });
+    res.status(201).send(JSON.stringify(newChirp));
+    return;
+  } catch (error) {
+    next(error);
+  }
+}
+/*
+  req.on("end", async () => {
     res.header("Content-Type", "application/json");
     try {
       const parsedBody = JSON.parse(body) as body;
-      if (typeof parsedBody.body !== "string") {
-        throw new BadRequestError("String expected");
+      if (
+        typeof parsedBody.body !== "string" ||
+        typeof parsedBody.userId !== "string"
+      ) {
+        throw new BadRequestError("Missing values");
       }
       if (parsedBody.body.length > 140) {
         throw new BadRequestError("Chirp is too long. Max length is 140");
@@ -39,11 +70,14 @@ function handlerCreateChirp(req: Request, res: Response, next: NextFunction) {
           return word;
         })
         .join(" ");
-      const successResponse: response = { cleanedBody };
-      res.status(200).send(JSON.stringify(successResponse));
+      const newChirp = await createChirp({
+        body: cleanedBody,
+        userId: parsedBody.userId,
+      });
+      res.status(201).send(JSON.stringify(newChirp));
       return;
     } catch (error) {
       next(error);
     }
   });
-}
+*/

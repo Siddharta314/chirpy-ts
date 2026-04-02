@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import {
   middlewareLogResponses,
   middlewareIncrementFileserverHits,
@@ -11,7 +11,7 @@ import { userRouter } from "./api/users.js";
 
 const app = express();
 const PORT = 8080;
-
+app.use(express.json());
 app.use(
   "/app",
   middlewareLogResponses,
