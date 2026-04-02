@@ -1,16 +1,18 @@
 import { NextFunction, Request, Response } from "express";
-import { BadRequestError } from "./customError.js";
+import { BadRequestError } from "../customError.js";
+import { Router } from "express";
+
+export const chirpyRouter = Router();
+
 type body = {
   body: string;
 };
 
 type response = { cleanedBody: string } | { error: string };
 
-export function handlerValidateChirp(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+chirpyRouter.post("/validate_chirp", handlerValidateChirp);
+
+function handlerValidateChirp(req: Request, res: Response, next: NextFunction) {
   let body = "";
   const profaneWords = ["kerfuffle", "sharbert", "fornax"];
   req.on("data", (chunk) => {

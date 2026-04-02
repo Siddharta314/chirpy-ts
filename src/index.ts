@@ -4,8 +4,9 @@ import {
   middlewareIncrementFileserverHits,
   middlewareErrorHandler,
 } from "./middleware.js";
-import { handlerValidateChirp } from "./api.js";
-import { config } from "./config.js";
+import { chirpyRouter } from "./api/chirpy.js";
+import { healthRouter } from "./api/health.js";
+import { adminRouter } from "./api/admin.js";
 
 const app = express();
 const PORT = 8080;
@@ -17,37 +18,12 @@ app.use(
   express.static("./src/app"),
 );
 
-app.get("/api/healthz", handlerReadiness);
-
-app.get("/admin/metrics", handlerMetrics);
-
-app.post("/admin/reset", handlerReset);
-
-app.post("/api/validate_chirp", handlerValidateChirp);
+app.use("/admin", adminRouter);
+app.use("/api", healthRouter);
+app.use("/api", chirpyRouter);
 
 app.use(middlewareErrorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
-
-function handlerReadiness(req: Request, res: Response) {
-  res.set("Content-Type", "text/plain; charset=utf-8");
-  res.send("OK");
-}
-
-function handlerMetrics(req: Request, res: Response) {
-  res.set("Content-Type", "text/html; charset=utf-8");
-  res.send(`<html>
-  <body>
-    <h1>Welcome, Chirpy Admin</h1>
-    <p>Chirpy has been visited ${config.api.fileserverHits} times!</p>
-  </body>
-</html>`);
-}
-
-function handlerReset(req: Request, res: Response) {
-  config.api.fileserverHits = 0;
-  res.set("Content-Type", "text/plain; charset=utf-8");
-  res.send("OK");
-}

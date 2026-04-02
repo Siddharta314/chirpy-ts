@@ -32,7 +32,7 @@ export function middlewareIncrementFileserverHits(
   next();
 }
 
-function errorHandler(
+export function middlewareErrorHandler(
   err: Error,
   req: Request,
   res: Response,
