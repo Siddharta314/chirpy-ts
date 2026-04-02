@@ -3,9 +3,14 @@ import { loadEnvFile } from "node:process";
 
 loadEnvFile();
 
+const rawPlatform = process.env.PLATFORM;
+const platform =
+  rawPlatform === "dev" || rawPlatform === "prod" ? rawPlatform : "prod";
+
 type Config = {
   api: APIConfig;
   db: DBConfig;
+  platform: "dev" | "prod";
 };
 
 type APIConfig = {
@@ -28,6 +33,7 @@ export const config: Config = {
     url: envOrThrow("DB_URL"),
     migrationConfig,
   },
+  platform: platform,
 };
 
 function envOrThrow(key: string): string {
