@@ -14,7 +14,10 @@ userRouter.post(
         throw new BadRequestError("Missing required fields");
       }
       const hashedPassword = await hashPassword(password);
-      const newUser = await createUser({ email, password: hashedPassword });
+      const newUser = await createUser({
+        email,
+        hashedPassword,
+      });
       res.status(201).json({
         id: newUser.id,
         email: newUser.email,
