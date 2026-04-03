@@ -15,6 +15,20 @@
       "when": 1775128072271,
       "tag": "0001_sparkling_daredevil",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775196685910,
+      "tag": "0002_amused_switch",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1775196727948,
+      "tag": "0003_third_maginty",
+      "breakpoints": true
     }
   ]
 }
