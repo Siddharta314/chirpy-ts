@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { BadRequestError } from "../customError.js";
+import { BadRequestError, NotFoundError } from "../customError.js";
 import { Router } from "express";
-import { createChirp, getChirps } from "../db/queries/chirps.js";
+import { createChirp, getChirps, getChirpById } from "../db/queries/chirps.js";
 
 export const chirpyRouter = Router();
 
@@ -12,6 +12,7 @@ type body = {
 
 chirpyRouter.post("/", handlerCreateChirp);
 chirpyRouter.get("/", handlerGetChirps);
+chirpyRouter.get("/:id", handlerGetChirpById);
 
 async function handlerCreateChirp(
   req: Request,
@@ -56,6 +57,25 @@ async function handlerGetChirps(
   try {
     const chirps = await getChirps();
     res.status(200).send(JSON.stringify(chirps));
+    return;
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function handlerGetChirpById(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { id } = req.params as { id: string };
+    const chirp = await getChirpById(id);
+
+    if (!chirp[0]) {
+      throw new NotFoundError("Chirp not found");
+    }
+    res.status(200).send(JSON.stringify(chirp[0]));
     return;
   } catch (error) {
     next(error);
