@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { BadRequestError } from "../customError.js";
 import { Router } from "express";
-import { createChirp } from "../db/queries/chirps.js";
+import { createChirp, getChirps } from "../db/queries/chirps.js";
 
 export const chirpyRouter = Router();
 
@@ -11,6 +11,7 @@ type body = {
 };
 
 chirpyRouter.post("/", handlerCreateChirp);
+chirpyRouter.get("/", handlerGetChirps);
 
 async function handlerCreateChirp(
   req: Request,
@@ -46,6 +47,21 @@ async function handlerCreateChirp(
     next(error);
   }
 }
+
+async function handlerGetChirps(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const chirps = await getChirps();
+    res.status(200).send(JSON.stringify(chirps));
+    return;
+  } catch (error) {
+    next(error);
+  }
+}
+
 /*
   req.on("end", async () => {
     res.header("Content-Type", "application/json");
