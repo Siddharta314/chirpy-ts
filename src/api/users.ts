@@ -3,7 +3,10 @@ import { Router } from "express";
 import { createUser } from "../db/queries/users.js";
 import { BadRequestError } from "../customError.js";
 import { hashPassword } from "../auth/index.js";
+import { NewUser } from "src/db/schema.js";
 export const userRouter = Router();
+
+export type UserResponse = Omit<NewUser, "hashedPassword">;
 
 userRouter.post(
   "/",
@@ -17,13 +20,13 @@ userRouter.post(
       const newUser = await createUser({
         email,
         hashedPassword,
-      });
+      } satisfies NewUser);
       res.status(201).json({
         id: newUser.id,
         email: newUser.email,
         createdAt: newUser.createdAt,
         updatedAt: newUser.updatedAt,
-      });
+      } satisfies UserResponse);
     } catch (error) {
       next(error);
     }
