@@ -12,33 +12,41 @@ export const userRouter = Router();
 
 export type UserResponse = Omit<NewUser, "hashedPassword">;
 
-userRouter.post(
-  "/",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { email, password } = req.body;
-      if (!email || !password) {
-        throw new BadRequestError("Missing required fields");
-      }
-      const hashedPassword = await hashPassword(password);
-      const newUser = await createUser({
-        email,
-        hashedPassword,
-      } satisfies NewUser);
-      const response: UserResponse = {
-        id: newUser.id,
-        email: newUser.email,
-        createdAt: newUser.createdAt,
-        updatedAt: newUser.updatedAt,
-      };
-      res.status(201).json(response);
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+userRouter.post("/", handlerCreateUser);
+userRouter.put("/", handlerUpdateUser);
 
-userRouter.put("/", async (req: Request, res: Response, next: NextFunction) => {
+async function handlerCreateUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      throw new BadRequestError("Missing required fields");
+    }
+    const hashedPassword = await hashPassword(password);
+    const newUser = await createUser({
+      email,
+      hashedPassword,
+    } satisfies NewUser);
+    const response: UserResponse = {
+      id: newUser.id,
+      email: newUser.email,
+      createdAt: newUser.createdAt,
+      updatedAt: newUser.updatedAt,
+    };
+    res.status(201).json(response);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function handlerUpdateUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -52,7 +60,6 @@ userRouter.put("/", async (req: Request, res: Response, next: NextFunction) => {
       email,
       hashedPassword,
     });
-    console.log(updatedUser);
     const result: UserResponse = {
       id: updatedUser.id,
       email: updatedUser.email,
@@ -63,4 +70,4 @@ userRouter.put("/", async (req: Request, res: Response, next: NextFunction) => {
   } catch (e) {
     next(e);
   }
-});
+}
