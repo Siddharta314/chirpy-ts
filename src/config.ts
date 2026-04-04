@@ -11,6 +11,7 @@ type Config = {
   api: APIConfig;
   db: DBConfig;
   platform: "dev" | "prod";
+  jwtSecret: string;
 };
 
 type APIConfig = {
@@ -34,6 +35,7 @@ export const config: Config = {
     migrationConfig,
   },
   platform: platform,
+  jwtSecret: envOrThrow("JWT_SECRET"),
 };
 
 function envOrThrow(key: string): string {
