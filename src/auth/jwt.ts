@@ -26,3 +26,15 @@ export function makeJWT(
 export function validateJWT(tokenString: string, secret: string): string {
   return verify(tokenString, secret) as string;
 }
+
+export function getBearerToken(req: Request): string {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    throw new Error("Authorization header is missing");
+  }
+  const token = authHeader.split(" ")[1];
+  if (!token) {
+    throw new Error("Bearer token is missing");
+  }
+  return token;
+}
