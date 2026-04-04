@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-
+import crypto from "crypto";
 const { sign, verify } = jwt;
 import type { JwtPayload } from "jsonwebtoken";
 import { Request } from "express";
@@ -67,14 +67,18 @@ export function validateJWT(tokenString: string, secret: string): string {
 export function getBearerToken(req: Request): string {
   const authHeader = req.headers["authorization"];
   if (!authHeader) {
-    throw new Error("Authorization header is missing");
+    throw new UnauthorizedError("Authorization header is missing");
   }
   if (!authHeader.startsWith("Bearer ")) {
-    throw new Error("Authorization header is not a Bearer token");
+    throw new UnauthorizedError("Authorization header is not a Bearer token");
   }
   const token = authHeader.split(" ")[1];
   if (!token) {
-    throw new Error("Bearer token is missing");
+    throw new UnauthorizedError("Bearer token is missing");
   }
   return token;
+}
+
+export function makeRefreshToken(): string {
+  return crypto.randomBytes(32).toString("hex");
 }
