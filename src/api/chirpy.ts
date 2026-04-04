@@ -2,12 +2,13 @@ import { NextFunction, Request, Response } from "express";
 import { BadRequestError, NotFoundError } from "../customError.js";
 import { Router } from "express";
 import { createChirp, getChirps, getChirpById } from "../db/queries/chirps.js";
+import { getBearerToken, validateJWT } from "../auth/jwt.js";
+import { config } from "../config.js";
 
 export const chirpyRouter = Router();
 
 type body = {
   body: string;
-  userId: string;
 };
 
 chirpyRouter.post("/", handlerCreateChirp);
@@ -21,8 +22,10 @@ async function handlerCreateChirp(
 ) {
   const profaneWords = ["kerfuffle", "sharbert", "fornax"];
   try {
-    const { body, userId } = req.body;
-    if (typeof body !== "string" || typeof userId !== "string") {
+    const { body } = req.body;
+    const jwt = getBearerToken(req);
+    const userId = validateJWT(jwt, config.jwtSecret);
+    if (typeof body !== "string") {
       throw new BadRequestError("Missing values");
     }
     if (body.length > 140) {
