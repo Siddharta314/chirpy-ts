@@ -1,5 +1,6 @@
 import { hash, verify } from "argon2";
-import { UnauthorizedError } from "src/customError";
+import { UnauthorizedError } from "../customError.js";
+import { Request } from "express";
 
 export async function hashPassword(password: string): Promise<string> {
   return hash(password);
@@ -13,7 +14,7 @@ export async function checkPasswordHash(
 }
 
 export function getAPIKey(req: Request): string {
-  const authHeader = req.headers.get("authorization");
+  const authHeader = req.headers["authorization"];
   if (!authHeader) {
     throw new UnauthorizedError("Missing polka authorization");
   }

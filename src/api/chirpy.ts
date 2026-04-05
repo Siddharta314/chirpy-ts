@@ -89,7 +89,6 @@ async function handlerGetChirpById(
     if (!chirp) {
       throw new NotFoundError("Chirp not found");
     }
-    console.log(chirp);
     res.status(200).send(JSON.stringify(chirp));
     return;
   } catch (error) {
@@ -107,7 +106,6 @@ async function handlerDeleteChirp(
     const jwt = getBearerToken(req);
     const userId = validateJWT(jwt, config.jwtSecret);
     const chirp = await getChirpById(chirpId);
-    console.log(chirp);
     if (!chirp) {
       throw new NotFoundError("Chirp not found");
     }

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import { BadRequestError, UnauthorizedError } from "../customError.js";
 import { checkPasswordHash } from "../auth/index.js";
 import { getUserByEmail } from "../db/queries/users.js";
-import { User } from "src/db/schema.js";
+import { User } from "../db/schema.js";
 import { getBearerToken, makeJWT, makeRefreshToken } from "../auth/jwt.js";
 import { config } from "../config.js";
 import {
