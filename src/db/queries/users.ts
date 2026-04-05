@@ -28,3 +28,11 @@ export async function updateUser(id: string, user: Partial<NewUser>) {
     .returning();
   return result;
 }
+
+export async function upgradeUserChirp(id: string) {
+  const result = await db
+    .update(users)
+    .set({ isChirpyRed: true })
+    .where(eq(users.id, id));
+  return result;
+}
