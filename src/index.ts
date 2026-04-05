@@ -9,6 +9,7 @@ import { healthRouter } from "./api/health.js";
 import { adminRouter } from "./api/admin.js";
 import { userRouter } from "./api/users.js";
 import { authRouter } from "./api/auth.js";
+import { webhookRouter } from "./api/webhook.js";
 
 const app = express();
 const PORT = 8080;
@@ -25,6 +26,7 @@ app.use("/api", healthRouter);
 app.use("/api/chirps", chirpyRouter);
 app.use("/api/users", userRouter);
 app.use("/api", authRouter);
+app.use("/api", webhookRouter);
 
 app.use(middlewareErrorHandler);
 

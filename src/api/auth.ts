@@ -63,6 +63,7 @@ async function handlerLogin(req: Request, res: Response, next: NextFunction) {
       updatedAt: user.updatedAt,
       token: jwtToken,
       refreshToken: refreshToken.token,
+      isChirpyRed: user.isChirpyRed,
     };
     res.status(200).json(response);
   } catch (error) {

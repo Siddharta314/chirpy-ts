@@ -3,14 +3,14 @@ import { Router } from "express";
 import { createUser } from "../db/queries/users.js";
 import { BadRequestError } from "../customError.js";
 import { hashPassword } from "../auth/index.js";
-import { NewUser } from "../db/schema.js";
+import { User, NewUser } from "../db/schema.js";
 import { getBearerToken, validateJWT } from "../auth/jwt.js";
 import { config } from "../config.js";
 import { updateUser } from "../db/queries/users.js";
 
 export const userRouter = Router();
 
-export type UserResponse = Omit<NewUser, "hashedPassword">;
+export type UserResponse = Omit<User, "hashedPassword">;
 
 userRouter.post("/", handlerCreateUser);
 userRouter.put("/", handlerUpdateUser);
@@ -35,6 +35,7 @@ async function handlerCreateUser(
       email: newUser.email,
       createdAt: newUser.createdAt,
       updatedAt: newUser.updatedAt,
+      isChirpyRed: newUser.isChirpyRed,
     };
     res.status(201).json(response);
   } catch (error) {
@@ -65,6 +66,7 @@ async function handlerUpdateUser(
       email: updatedUser.email,
       createdAt: updatedUser.createdAt,
       updatedAt: updatedUser.updatedAt,
+      isChirpyRed: updatedUser.isChirpyRed,
     };
     res.status(200).json(result);
   } catch (e) {
