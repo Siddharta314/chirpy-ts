@@ -12,6 +12,7 @@ type Config = {
   db: DBConfig;
   platform: "dev" | "prod";
   jwtSecret: string;
+  polkaKey: string;
 };
 
 type APIConfig = {
@@ -36,6 +37,7 @@ export const config: Config = {
   },
   platform: platform,
   jwtSecret: envOrThrow("JWT_SECRET"),
+  polkaKey: envOrThrow("POLKA_KEY"),
 };
 
 function envOrThrow(key: string): string {
