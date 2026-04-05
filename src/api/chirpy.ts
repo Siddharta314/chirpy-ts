@@ -11,7 +11,6 @@ import {
   getChirpById,
   deleteChirp,
 } from "../db/queries/chirps.js";
-import { Chirp } from "../db/schema.js";
 import { getBearerToken, validateJWT } from "../auth/jwt.js";
 import { config } from "../config.js";
 
@@ -69,7 +68,23 @@ async function handlerGetChirps(
   next: NextFunction,
 ) {
   try {
-    const chirps = await getChirps();
+    let authorId = "";
+    let authorIdQuery = req.query.authorId;
+    if (typeof authorIdQuery === "string") {
+      authorId = authorIdQuery;
+    }
+
+    const sortBy = req.query.sort === "desc" ? "desc" : "asc";
+    let chirps = await getChirps(authorId);
+    chirps.sort((a, b) => {
+      const timeA = new Date(a.createdAt).getTime();
+      const timeB = new Date(b.createdAt).getTime();
+
+      if (sortBy === "desc") {
+        return timeB - timeA; // Más nuevo primero
+      }
+      return timeA - timeB; // Más viejo primero
+    });
     res.status(200).send(JSON.stringify(chirps));
     return;
   } catch (error) {
